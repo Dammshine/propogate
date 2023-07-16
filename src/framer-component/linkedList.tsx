@@ -10,8 +10,6 @@ export interface LinkedListState {
   settings: UiState;
 }
 
-const SIZE = 50;
-
 const LinkedList: React.FC<LinkedListState> = ({ linkedListState, settings }) => {
   const [state, setNodes] = useState(linkedListState);
   const nodeRefs = useRef<{

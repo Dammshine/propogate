@@ -3,11 +3,6 @@ import { forwardRef, useState } from "react";
 import { UiState } from "../types/uiState";
 import { FrontendLinkedListGraph } from "../types/graphState";
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 interface NodePros {
   delay: number;
   nodeUid: string;
@@ -83,7 +78,7 @@ const LinkedNode = forwardRef<SVGSVGElement, NodePros>(
           setIsHovered(false);
           setShowAddButton(!showAddButton);
         }}
-        onDragEnd={(event, info) => {
+        onDragEnd={(_event, info) => {
           nodeEntity.x += info.offset.x;
           nodeEntity.y += info.offset.y;
 

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import React, { forwardRef } from 'react';
-import { EdgeEntity, FrontendLinkedListGraph, NodeEntity } from '../types/graphState';
+import { forwardRef } from 'react';
+import { FrontendLinkedListGraph, NodeEntity } from '../types/graphState';
 
 interface EdgeProps {
   edgeUid: string;
