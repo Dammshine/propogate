@@ -1,163 +1,99 @@
-import React, { useState } from 'react';
-import DrawingBoard from './component/DrawingBoard';
-import { generateArrayState, generateIncreArrayState } from './component/type/arrayDsParser';
-import { State, VariableType } from './component/type/state';
-import "./App.css"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ForceDirectedGraph, { Link, Node } from './component/linkedList';
+import { useState, useEffect } from 'react';
+import { DrawingMotions } from './framer-component/drawingMotion';
+import { BackendLinkedList } from './framer-component/types/graphState';
 
-const App: React.FC = () => {
-  const [currState, setEntityData] = useState<State | null>(null);
-  const [history, setHistory] = useState<State[]>([]);
-  const [example, setExample] = useState<'traverse' | 'sum' | null>(null);
+const initialNodes: Node[] = [
+  // add your nodes here
+  { id: "1", label: "Node 1", x: 50, y: 100 },
+  { id: "2", label: "Node 2", x: 200, y: 100 },
+];
 
-  const onGenerateArray = () => {
-    const randomArrayData = generateArrayState();
-    setEntityData(randomArrayData);
-    setHistory([clone(randomArrayData)]);
-  };
+const nodesHistory: Node[][] = [
+  [
+    // add your nodes here
+    { id: "1", label: "Node 1", x: 50, y: 100 },
+    { id: "2", label: "Node 2", x: 200, y: 100 },
+  ],
+  [
+    // add your nodes here
+    { id: "1", label: "Node 1", x: 50, y: 100 },
+    { id: "2", label: "Node 2", x: 350, y: 150 },
+  ],
+  [
+    // add your nodes here
+    { id: "1", label: "Node 1", x: 50, y: 100 },
+    { id: "2", label: "Node 2", x: 450, y: 150 },
+    { id: "3", label: "Node 3", x: 200, y: 100 },
+  ],
+  [
+    // add your nodes here
+    { id: "1", label: "Node 1", x: 50, y: 100 },
+    { id: "2", label: "Node 2", x: 450, y: 100 },
+    { id: "3", label: "Node 3", x: 200, y: 100 },
+  ],
+];
 
-  const onIncreGenerateArray = () => {
-    const randomArrayData = generateIncreArrayState();
-    setEntityData(randomArrayData);
-    setHistory([clone(randomArrayData)]);
-  };
+const links: Link[] = [
+  // add your links here
+  { source: "1", target: "2", strength: 0.7 },
+];
 
-  const renderExampleButtons = () => {
-    return (
-      <div>
-        <button
-          className="btn btn-primary"
-          onClick={() => setExample('traverse')}
-        >
-          Traverse Array Example
-        </button>
-        <button className="btn btn-primary" onClick={() => setExample('sum')}>
-          Sum Example
-        </button>
-      </div>
-    );
-  };
+const width = 800; // specify width here
+const height = 600; // specify height here
 
-  const onResetArray = () => {
-    setEntityData(null);
-    setHistory([]);
-  };
+const framerNodes: BackendLinkedList = {
+  nodes: [
+    {
+      nodeId: '0x000001',
+      value: 'Node 1',
+      next: '0x000002',
+    },
+    {
+      nodeId: '0x000002',
+      value: 'Node 2',
+      next: '0x000003',
+    },
+    {
+      nodeId: '0x000003',
+      value: 'Node 3',
+      next: '0x000004',
+    },
+    {
+      nodeId: '0x000004',
+      value: 'Node 4',
+      next: null,
+    },
+  ],
+};
 
-  const clone = (a: any) => {
-    return JSON.parse(JSON.stringify(a));
-  }
+const RoutesComponent = () => {
+  const [nodes, setNodes] = useState(initialNodes);
 
-  const onNextState = () => {
-    if (currState) {
-      let value = 0;
-      for (let variable of currState.variables) {
-        let array = currState.dataStructure;
-        if (variable.type === VariableType.POINTER) {
-          let addr = variable.addr;
-          let arrayIndex = array.data.findIndex(
-            element => element.addr === addr,
-          );
-
-          if (arrayIndex !== -1 && arrayIndex + 1 < array.data.length) {
-            variable.addr = array.data[arrayIndex + 1].addr;
-            variable.value = array.data[arrayIndex + 1].data as string;
-            value = Number(array.data[arrayIndex + 1].data);
-          } else {
-            return;
-          }
-          setEntityData(currState);
-        } else {
-          // Sum up the value
-          variable.value = (Number(variable.value) + value).toString();
-          setEntityData(currState);
-          setHistory([...history, clone(currState)]);
-        }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      for (let i = 0; i < nodesHistory.length; i++) {
+        setTimeout(() => {
+          setNodes(nodesHistory[i]);
+        }, i * 1000);
       }
-    }
-  };
+    }, 5000);
 
-  const onPreviousState = () => {
-    if (history.length > 1) {
-      const previousHistory = history.slice(0, -1);
-      setHistory(clone(previousHistory));
-      debugger;
-      console.log('Histroy state', previousHistory[previousHistory.length - 1])
-      setEntityData(clone(previousHistory[previousHistory.length - 1]));
-    }
-  }
+    return () => clearTimeout(timeout);
+  }, []);
 
-  const onDebug = () => {
-    console.log(history);
-  }
-
-  const prevState = history.length > 1 ? history[history.length - 2] : null;
-  const nextState = currState;
-
-
-  // Graph: Adjacency list, (we use the index at adjaceny list as the node)
-  // Graph[0] will be a linked list, represent edge between node 0 and other node
-
-  // Visited array (type: state)
-  // array with same size, and each index the node
-  // 
   return (
-    <div
-      className="App"
-      style={{
-        height: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#ebe8f4',
-        margin: '0',
-        padding: '0',
-      }}
-    >
-      <h1 style={{ margin: '0', padding: '1rem', color: 'black' }}>
-        Playground
-      </h1>
-      <div style={{ flex: '0 0 80%', overflow: 'auto' }}>
-        {nextState && (
-          <DrawingBoard prevState={prevState} nextState={nextState} />
-        )}
-      </div>
-      <div
-        style={{
-          flex: '0 0 20%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <button
-          className="btn btn-primary"
-          onClick={onGenerateArray}
-          style={{ padding: '10px' }}
-          disabled={currState !== null}
-        >
-          Generate Traverse Array Example
-        </button>
-        <button
-          className="btn btn-primary"
-          onClick={onIncreGenerateArray}
-          style={{ margin: '10px' }}
-          disabled={currState !== null}
-        >
-          Generate Sum Example
-        </button>
-        <button className="btn btn-warning" onClick={onResetArray} style={{ margin: '10px' }}>
-          Reset Array
-        </button>
-        <button className="btn btn-success" onClick={onNextState} style={{ margin: '10px' }}>
-          Next State
-        </button>
-        <button className="btn btn-info" onClick={onPreviousState} style={{ margin: '10px' }}>
-          Previous State
-        </button>
-        <button className="btn btn-info" onClick={onDebug} style={{ margin: '10px' }}>
-          Debug
-        </button>
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<ForceDirectedGraph nodes={nodes} links={links} width={width} height={height} />}
+        />
+        <Route path="/linked-node" element={<DrawingMotions nodes={framerNodes.nodes}/>} />
+      </Routes>
+    </Router>
   );
 };
 
-export default App;
+export default RoutesComponent;
