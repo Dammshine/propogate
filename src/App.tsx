@@ -1,8 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ForceDirectedGraph, { Link, Node } from './component/linkedList';
-import { useState, useEffect } from 'react';
-import { DrawingMotions } from './framer-component/drawingMotion';
-import { BackendLinkedList } from './framer-component/types/graphState';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ForceDirectedGraph, { Link, Node } from "./component/linkedList";
+import { useState, useEffect } from "react";
+import { DrawingMotions } from "./framer-component/drawingMotion";
+import { BackendLinkedList } from "./framer-component/types/graphState";
+import Login from "./pages/Login";
+import "./App.css";
+import Signup from "./pages/Signup";
 
 const initialNodes: Node[] = [
   // add your nodes here
@@ -46,23 +49,23 @@ const height = 600; // specify height here
 const framerNodes: BackendLinkedList = {
   nodes: [
     {
-      nodeId: '0x000001',
-      value: 'Node 1',
-      next: '0x000002',
+      nodeId: "0x000001",
+      value: "Node 1",
+      next: "0x000002",
     },
     {
-      nodeId: '0x000002',
-      value: 'Node 2',
-      next: '0x000003',
+      nodeId: "0x000002",
+      value: "Node 2",
+      next: "0x000003",
     },
     {
-      nodeId: '0x000003',
-      value: 'Node 3',
-      next: '0x000004',
+      nodeId: "0x000003",
+      value: "Node 3",
+      next: "0x000004",
     },
     {
-      nodeId: '0x000004',
-      value: 'Node 4',
+      nodeId: "0x000004",
+      value: "Node 4",
       next: null,
     },
   ],
@@ -86,11 +89,10 @@ const RoutesComponent = () => {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={<ForceDirectedGraph nodes={nodes} links={links} width={width} height={height} />}
-        />
-        <Route path="/linked-node" element={<DrawingMotions nodes={framerNodes.nodes}/>} />
+        <Route path="/" element={<ForceDirectedGraph nodes={nodes} links={links} width={width} height={height} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/linked-node" element={<DrawingMotions nodes={framerNodes.nodes} />} />
       </Routes>
     </Router>
   );
